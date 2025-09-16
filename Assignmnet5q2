@@ -1,0 +1,98 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int data;
+    Node* next;
+    
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+class LinkedList {
+private:
+    Node* head;
+    Node nodes[10];
+    int nodeCount;
+    
+public:
+    LinkedList() : head(nullptr), nodeCount(0) {}
+    
+    void insertAtEnd(int value) {
+        if (nodeCount >= 10) {
+            cout << "Maximum nodes reached!" << endl;
+            return;
+        }
+        nodes[nodeCount] = Node(value);
+        
+        if (head == nullptr) {
+            head = &nodes[nodeCount];
+        } else {
+            Node* temp = head;
+            while (temp->next != nullptr) {
+                temp = temp->next;
+            }
+            temp->next = &nodes[nodeCount];
+        }
+        nodeCount++;
+    }
+    
+    int countAndDelete(int key) {
+        int count = 0;
+        Node* current = head;
+        Node* prev = nullptr;
+        
+        while (current != nullptr) {
+            if (current->data == key) {
+                count++;
+                
+                if (prev == nullptr) {
+                    head = current->next;
+                    current = head;
+                } else {
+                    prev->next = current->next;
+                    current = prev->next;
+                }
+            } else {
+                prev = current;
+                current = current->next;
+            }
+        }
+        
+        return count;
+    }
+    
+    void display() {
+        Node* temp = head;
+        while (temp != nullptr) {
+            cout << temp->data << " -> ";
+            temp = temp->next;
+        }
+        cout << "NULL" << endl;
+    }
+};
+
+int main() {
+    LinkedList list;
+    
+    // Create the linked list: 1->2->1->2->1->3->1
+    list.insertAtEnd(1);
+    list.insertAtEnd(2);
+    list.insertAtEnd(1);
+    list.insertAtEnd(2);
+    list.insertAtEnd(1);
+    list.insertAtEnd(3);
+    list.insertAtEnd(1);
+    
+    cout << "Original Linked List: ";
+    list.display();
+    
+    int key = 1;
+    int count = list.countAndDelete(key);
+    
+    cout << "Count of " << key << ": " << count << endl;
+    cout << "Updated Linked List: ";
+    list.display();
+    
+    return 0;
+}
