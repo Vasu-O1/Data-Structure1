@@ -1,0 +1,73 @@
+#include <iostream>
+using namespace std;
+
+class CharQueue {
+private:
+    char queue[100];
+    int count[256] = {0}; // ASCII count
+    int front, rear;
+    int size;
+    
+public:
+    CharQueue() : front(-1), rear(-1), size(100) {}
+    
+    void enqueue(char c) {
+        if (isFull()) return;
+        if (isEmpty()) front = 0;
+        rear++;
+        queue[rear] = c;
+        count[c]++;
+    }
+    
+    char dequeue() {
+        if (isEmpty()) return '\0';
+        char c = queue[front];
+        count[c]--;
+        if (front == rear) {
+            front = rear = -1;
+        } else {
+            front++;
+        }
+        return c;
+    }
+    
+    bool isEmpty() {
+        return front == -1;
+    }
+    
+    bool isFull() {
+        return rear == size - 1;
+    }
+    
+    char getFirstNonRepeating() {
+        while (!isEmpty() && count[queue[front]] > 1) {
+            dequeue();
+        }
+        if (isEmpty()) return '\0';
+        return queue[front];
+    }
+    
+    void processString(const string& s) {
+        front = rear = -1;
+        for (int i = 0; i < 256; i++) count[i] = 0;
+        
+        cout << "Input: " << s << endl;
+        cout << "Output: ";
+        for (char c : s) {
+            enqueue(c);
+            char result = getFirstNonRepeating();
+            if (result == '\0') {
+                cout << "-1 ";
+            } else {
+                cout << result << " ";
+            }
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    CharQueue cq;
+    cq.processString("aabc");
+    return 0;
+}
