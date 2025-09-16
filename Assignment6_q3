@@ -1,0 +1,109 @@
+#include <iostream>
+using namespace std;
+
+// Doubly Linked List Node
+class DNode {
+public:
+    int data;
+    DNode* prev;
+    DNode* next;
+    
+    DNode(int val) : data(val), prev(nullptr), next(nullptr) {}
+};
+
+// Circular Linked List Node
+class CNode {
+public:
+    int data;
+    CNode* next;
+    
+    CNode(int val) : data(val), next(nullptr) {}
+};
+
+class SizeFinder {
+private:
+    DNode* dHead;
+    CNode* cHead;
+    DNode dNodes[10];
+    CNode cNodes[10];
+    int dCount, cCount;
+    
+public:
+    SizeFinder() : dHead(nullptr), cHead(nullptr), dCount(0), cCount(0) {}
+    
+    void createDLL() {
+        // Create sample DLL
+        for (int i = 1; i <= 5; i++) {
+            if (dCount >= 10) break;
+            dNodes[dCount] = DNode(i);
+            if (dHead == nullptr) {
+                dHead = &dNodes[dCount];
+            } else {
+                DNode* temp = dHead;
+                while (temp->next != nullptr) {
+                    temp = temp->next;
+                }
+                temp->next = &dNodes[dCount];
+                dNodes[dCount].prev = temp;
+            }
+            dCount++;
+        }
+    }
+    
+    void createCLL() {
+        // Create sample CLL
+        for (int i = 1; i <= 7; i++) {
+            if (cCount >= 10) break;
+            cNodes[cCount] = CNode(i);
+            if (cHead == nullptr) {
+                cHead = &cNodes[cCount];
+                cHead->next = cHead;
+            } else {
+                CNode* temp = cHead;
+                while (temp->next != cHead) {
+                    temp = temp->next;
+                }
+                temp->next = &cNodes[cCount];
+                cNodes[cCount].next = cHead;
+            }
+            cCount++;
+        }
+    }
+    
+    int getDLLSize() {
+        int size = 0;
+        DNode* temp = dHead;
+        while (temp != nullptr) {
+            size++;
+            temp = temp->next;
+        }
+        return size;
+    }
+    
+    int getCLLSize() {
+        if (cHead == nullptr) return 0;
+        
+        int size = 0;
+        CNode* temp = cHead;
+        do {
+            size++;
+            temp = temp->next;
+        } while (temp != cHead);
+        
+        return size;
+    }
+    
+    void displaySizes() {
+        createDLL();
+        createCLL();
+        
+        cout << "Size of Doubly Linked List: " << getDLLSize() << endl;
+        cout << "Size of Circular Linked List: " << getCLLSize() << endl;
+    }
+};
+
+int main() {
+    SizeFinder finder;
+    finder.displaySizes();
+    return 0;
+}
