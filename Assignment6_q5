@@ -1,0 +1,98 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int data;
+    Node* next;
+    
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+class CircularChecker {
+private:
+    Node* head;
+    Node nodes[10];
+    int count;
+    bool isCircular;
+    
+public:
+    CircularChecker() : head(nullptr), count(0), isCircular(false) {}
+    
+    void createLinearList() {
+        // Create linear list: 2->4->6->7->5
+        for (int i = 0; i < 5; i++) {
+            if (count >= 10) break;
+            nodes[count] = Node(i*2 + 2);
+            if (head == nullptr) {
+                head = &nodes[count];
+            } else {
+                Node* temp = head;
+                while (temp->next != nullptr) {
+                    temp = temp->next;
+                }
+                temp->next = &nodes[count];
+            }
+            count++;
+        }
+    }
+    
+    void createCircularList() {
+        // Create circular list
+        for (int i = 0; i < 5; i++) {
+            if (count >= 10) break;
+            nodes[count] = Node(i*2 + 2);
+            if (head == nullptr) {
+                head = &nodes[count];
+                head->next = head;
+            } else {
+                Node* temp = head;
+                while (temp->next != head) {
+                    temp = temp->next;
+                }
+                temp->next = &nodes[count];
+                nodes[count].next = head;
+            }
+            count++;
+        }
+        isCircular = true;
+    }
+    
+    bool checkCircular() {
+        if (head == nullptr) return false;
+        
+        if (isCircular) return true;
+        
+        Node* slow = head;
+        Node* fast = head;
+        
+        while (fast != nullptr && fast->next != nullptr) {
+            slow = slow->next;
+            fast = fast->next->next;
+            
+            if (slow == fast) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    void testCircular() {
+        createLinearList();
+        cout << "Linear list is circular: " << (checkCircular() ? "True" : "False") << endl;
+        
+        // Reset for circular test
+        head = nullptr;
+        count = 0;
+        isCircular = false;
+        
+        createCircularList();
+        cout << "Circular list is circular: " << (checkCircular() ? "True" : "False") << endl;
+    }
+};
+
+int main() {
+    CircularChecker checker;
+    checker.testCircular();
+    return 0;
+}
