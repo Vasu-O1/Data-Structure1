@@ -1,0 +1,134 @@
+#include <iostream>
+using namespace std;
+
+class Queue {
+private:
+    int arr[100];
+    int front, rear;
+    int size;
+    
+public:
+    Queue() : front(-1), rear(-1), size(100) {}
+    
+    void enqueue(int value) {
+        if (isFull()) return;
+        if (isEmpty()) front = 0;
+        rear++;
+        arr[rear] = value;
+    }
+    
+    int dequeue() {
+        if (isEmpty()) return -1;
+        int value = arr[front];
+        if (front == rear) {
+            front = rear = -1;
+        } else {
+            front++;
+        }
+        return value;
+    }
+    
+    bool isEmpty() {
+        return front == -1;
+    }
+    
+    bool isFull() {
+        return rear == size - 1;
+    }
+    
+    int getFront() {
+        if (isEmpty()) return -1;
+        return arr[front];
+    }
+};
+
+// Stack using two queues
+class StackTwoQueues {
+private:
+    Queue q1, q2;
+    
+public:
+    void push(int value) {
+        q2.enqueue(value);
+        while (!q1.isEmpty()) {
+            q2.enqueue(q1.dequeue());
+        }
+        // Swap q1 and q2
+        Queue temp = q1;
+        q1 = q2;
+        q2 = temp;
+    }
+    
+    int pop() {
+        if (q1.isEmpty()) return -1;
+        return q1.dequeue();
+    }
+    
+    int top() {
+        if (q1.isEmpty()) return -1;
+        return q1.getFront();
+    }
+    
+    bool isEmpty() {
+        return q1.isEmpty();
+    }
+};
+
+// Stack using one queue
+class StackOneQueue {
+private:
+    Queue q;
+    
+public:
+    void push(int value) {
+        int n = 0;
+        int temp[100];
+        
+        // Dequeue all elements and count
+        while (!q.isEmpty()) {
+            temp[n++] = q.dequeue();
+        }
+        
+        // Enqueue new value
+        q.enqueue(value);
+        
+        // Enqueue all previous elements
+        for (int i = 0; i < n; i++) {
+            q.enqueue(temp[i]);
+        }
+    }
+    
+    int pop() {
+        return q.dequeue();
+    }
+    
+    int top() {
+        return q.getFront();
+    }
+    
+    bool isEmpty() {
+        return q.isEmpty();
+    }
+};
+
+int main() {
+    cout << "Stack using Two Queues:" << endl;
+    StackTwoQueues s1;
+    s1.push(1);
+    s1.push(2);
+    s1.push(3);
+    cout << "Top: " << s1.top() << endl;
+    cout << "Pop: " << s1.pop() << endl;
+    cout << "Top: " << s1.top() << endl;
+    
+    cout << "\nStack using One Queue:" << endl;
+    StackOneQueue s2;
+    s2.push(1);
+    s2.push(2);
+    s2.push(3);
+    cout << "Top: " << s2.top() << endl;
+    cout << "Pop: " << s2.pop() << endl;
+    cout << "Top: " << s2.top() << endl;
+    
+    return 0;
+}
