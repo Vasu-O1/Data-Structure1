@@ -1,0 +1,140 @@
+#include <iostream>
+using namespace std;
+
+// Node structure for Doubly Linked List
+class DNode {
+public:
+    int data;
+    DNode* prev;
+    DNode* next;
+    
+    DNode(int val) : data(val), prev(nullptr), next(nullptr) {}
+};
+
+// Node structure for Circular Linked List
+class CNode {
+public:
+    int data;
+    CNode* next;
+    
+    CNode(int val) : data(val), next(nullptr) {}
+};
+
+class LinkedListMenu {
+private:
+    DNode* dHead;
+    CNode* cHead;
+    DNode dNodes[100];
+    CNode cNodes[100];
+    int dCount, cCount;
+    
+public:
+    LinkedListMenu() : dHead(nullptr), cHead(nullptr), dCount(0), cCount(0) {}
+    
+    // Circular Linked List Operations
+    void insertAtEndCLL(int value) {
+        if (cCount >= 100) return;
+        
+        cNodes[cCount] = CNode(value);
+        CNode* newNode = &cNodes[cCount];
+        
+        if (cHead == nullptr) {
+            cHead = newNode;
+            newNode->next = cHead;
+        } else {
+            CNode* temp = cHead;
+            while (temp->next != cHead) {
+                temp = temp->next;
+            }
+            temp->next = newNode;
+            newNode->next = cHead;
+        }
+        cCount++;
+    }
+    
+    void displayCLL() {
+        if (cHead == nullptr) {
+            cout << "Circular List is empty" << endl;
+            return;
+        }
+        
+        CNode* temp = cHead;
+        do {
+            cout << temp->data << " -> ";
+            temp = temp->next;
+        } while (temp != cHead);
+        cout << cHead->data << endl;
+    }
+    
+    // Doubly Linked List Operations
+    void insertAtEndDLL(int value) {
+        if (dCount >= 100) return;
+        
+        dNodes[dCount] = DNode(value);
+        DNode* newNode = &dNodes[dCount];
+        
+        if (dHead == nullptr) {
+            dHead = newNode;
+        } else {
+            DNode* temp = dHead;
+            while (temp->next != nullptr) {
+                temp = temp->next;
+            }
+            temp->next = newNode;
+            newNode->prev = temp;
+        }
+        dCount++;
+    }
+    
+    void displayDLL() {
+        if (dHead == nullptr) {
+            cout << "Doubly List is empty" << endl;
+            return;
+        }
+        
+        DNode* temp = dHead;
+        while (temp != nullptr) {
+            cout << temp->data << " <-> ";
+            temp = temp->next;
+        }
+        cout << "NULL" << endl;
+    }
+    
+    void runMenu() {
+        int choice, type, value;
+        
+        while (true) {
+            cout << "\nLinked List Operations Menu:" << endl;
+            cout << "1. Circular Linked List" << endl;
+            cout << "2. Doubly Linked List" << endl;
+            cout << "3. Exit" << endl;
+            cout << "Enter choice: ";
+            cin >> choice;
+            
+            if (choice == 3) break;
+            
+            cout << "1. Insert at end" << endl;
+            cout << "2. Display" << endl;
+            cout << "Enter operation: ";
+            cin >> type;
+            
+            if (type == 1) {
+                cout << "Enter value: ";
+                cin >> value;
+                
+                if (choice == 1) insertAtEndCLL(value);
+                else insertAtEndDLL(value);
+                
+            } else if (type == 2) {
+                if (choice == 1) displayCLL();
+                else displayDLL();
+            }
+        }
+    }
+};
+
+int main() {
+    LinkedListMenu menu;
+    menu.runMenu();
+    return 0;
+}
