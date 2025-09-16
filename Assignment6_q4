@@ -1,0 +1,71 @@
+#include <iostream>
+using namespace std;
+
+class DNode {
+public:
+    char data;
+    DNode* prev;
+    DNode* next;
+    
+    DNode(char val) : data(val), prev(nullptr), next(nullptr) {}
+};
+
+class PalindromeChecker {
+private:
+    DNode* head;
+    DNode* tail;
+    DNode nodes[10];
+    int count;
+    
+public:
+    PalindromeChecker() : head(nullptr), tail(nullptr), count(0) {}
+    
+    void insertAtEnd(char value) {
+        if (count >= 10) return;
+        
+        nodes[count] = DNode(value);
+        DNode* newNode = &nodes[count];
+        
+        if (head == nullptr) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail->next = newNode;
+            newNode->prev = tail;
+            tail = newNode;
+        }
+        count++;
+    }
+    
+    bool isPalindrome() {
+        if (head == nullptr) return true;
+        
+        DNode* front = head;
+        DNode* back = tail;
+        
+        while (front != back && front->prev != back) {
+            if (front->data != back->data) {
+                return false;
+            }
+            front = front->next;
+            back = back->prev;
+        }
+        return true;
+    }
+    
+    void createAndCheck() {
+        // Create sample list: E -> V -> E -> L
+        insertAtEnd('E');
+        insertAtEnd('V');
+        insertAtEnd('E');
+        insertAtEnd('L');
+        
+        cout << "Is palindrome: " << (isPalindrome() ? "True" : "False") << endl;
+    }
+};
+
+int main() {
+    PalindromeChecker checker;
+    checker.createAndCheck();
+    return 0;
+}
