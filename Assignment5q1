@@ -1,0 +1,252 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* head = NULL;
+
+void insertAtBeginning(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->next = head;
+    head = newNode;
+    printf("Node inserted at beginning successfully.\n");
+}
+
+void insertAtEnd(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->next = NULL;
+    
+    if (head == NULL) {
+        head = newNode;
+    } else {
+        struct Node* temp = head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+    printf("Node inserted at end successfully.\n");
+}
+
+void insertBefore(int value, int key) {
+    if (head == NULL) {
+        printf("List is empty. Cannot insert before.\n");
+        return;
+    }
+    
+    if (head->data == key) {
+        insertAtBeginning(value);
+        return;
+    }
+    
+    struct Node* temp = head;
+    while (temp->next != NULL && temp->next->data != key) {
+        temp = temp->next;
+    }
+    
+    if (temp->next == NULL) {
+        printf("Key not found in the list.\n");
+    } else {
+        struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data = value;
+        newNode->next = temp->next;
+        temp->next = newNode;
+        printf("Node inserted before %d successfully.\n", key);
+    }
+}
+
+void insertAfter(int value, int key) {
+    if (head == NULL) {
+        printf("List is empty. Cannot insert after.\n");
+        return;
+    }
+    
+    struct Node* temp = head;
+    while (temp != NULL && temp->data != key) {
+        temp = temp->next;
+    }
+    
+    if (temp == NULL) {
+        printf("Key not found in the list.\n");
+    } else {
+        struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data = value;
+        newNode->next = temp->next;
+        temp->next = newNode;
+        printf("Node inserted after %d successfully.\n", key);
+    }
+}
+
+void deleteFromBeginning() {
+    if (head == NULL) {
+        printf("List is empty. Nothing to delete.\n");
+        return;
+    }
+    
+    struct Node* temp = head;
+    head = head->next;
+    free(temp);
+    printf("Node deleted from beginning successfully.\n");
+}
+
+void deleteFromEnd() {
+    if (head == NULL) {
+        printf("List is empty. Nothing to delete.\n");
+        return;
+    }
+    
+    if (head->next == NULL) {
+        free(head);
+        head = NULL;
+        printf("Node deleted from end successfully.\n");
+        return;
+    }
+    
+    struct Node* temp = head;
+    while (temp->next->next != NULL) {
+        temp = temp->next;
+    }
+    
+    free(temp->next);
+    temp->next = NULL;
+    printf("Node deleted from end successfully.\n");
+}
+
+void deleteSpecific(int key) {
+    if (head == NULL) {
+        printf("List is empty. Nothing to delete.\n");
+        return;
+    }
+    
+    if (head->data == key) {
+        deleteFromBeginning();
+        return;
+    }
+    
+    struct Node* temp = head;
+    while (temp->next != NULL && temp->next->data != key) {
+        temp = temp->next;
+    }
+    
+    if (temp->next == NULL) {
+        printf("Key not found in the list.\n");
+    } else {
+        struct Node* toDelete = temp->next;
+        temp->next = temp->next->next;
+        free(toDelete);
+        printf("Node %d deleted successfully.\n", key);
+    }
+}
+
+int search(int key) {
+    struct Node* temp = head;
+    int position = 1;
+    
+    while (temp != NULL) {
+        if (temp->data == key) {
+            return position;
+        }
+        temp = temp->next;
+        position++;
+    }
+    
+    return -1;
+}
+
+void display() {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    
+    struct Node* temp = head;
+    printf("Linked List: ");
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    int choice, value, key;
+    
+    while (1) {
+        printf("\nSingly Linked List Operations:\n");
+        printf("1. Insert at beginning\n");
+        printf("2. Insert at end\n");
+        printf("3. Insert before a node\n");
+        printf("4. Insert after a node\n");
+        printf("5. Delete from beginning\n");
+        printf("6. Delete from end\n");
+        printf("7. Delete a specific node\n");
+        printf("8. Search for a node\n");
+        printf("9. Display all nodes\n");
+        printf("10. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        
+        switch (choice) {
+            case 1:
+                printf("Enter value to insert: ");
+                scanf("%d", &value);
+                insertAtBeginning(value);
+                break;
+            case 2:
+                printf("Enter value to insert: ");
+                scanf("%d", &value);
+                insertAtEnd(value);
+                break;
+            case 3:
+                printf("Enter value to insert: ");
+                scanf("%d", &value);
+                printf("Enter key before which to insert: ");
+                scanf("%d", &key);
+                insertBefore(value, key);
+                break;
+            case 4:
+                printf("Enter value to insert: ");
+                scanf("%d", &value);
+                printf("Enter key after which to insert: ");
+                scanf("%d", &key);
+                insertAfter(value, key);
+                break;
+            case 5:
+                deleteFromBeginning();
+                break;
+            case 6:
+                deleteFromEnd();
+                break;
+            case 7:
+                printf("Enter key to delete: ");
+                scanf("%d", &key);
+                deleteSpecific(key);
+                break;
+            case 8:
+                printf("Enter key to search: ");
+                scanf("%d", &key);
+                int pos = search(key);
+                if (pos == -1) {
+                    printf("Node not found in the list.\n");
+                } else {
+                    printf("Node found at position %d from head.\n", pos);
+                }
+                break;
+            case 9:
+                display();
+                break;
+            case 10:
+                printf("Exiting program.\n");
+                exit(0);
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+    
+    return 0;
+}
